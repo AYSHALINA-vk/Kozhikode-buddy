@@ -101,6 +101,17 @@ The talk part of the session: how a platform like this works underneath.
 - **The best free guide:** *Voice AI & Voice Agents: An Illustrated Primer*, voiceaiandvoiceagents.com
 - **Slides and the full Pipecat demo** from the talk: https://github.com/abhishekmishragithub/voice-ai-talk/tree/main/2026-09-26-cloudways-voice-agents-demo-to-prod
 
+## The slides (`deck/`)
+The deck from the session is a [Slidev](https://sli.dev) project, with speaker notes on every slide. A PDF copy is at `deck/kochi-deck.pdf`.
+
+```bash
+cd deck
+npm install
+npx slidev slides.md          # opens the deck at http://localhost:3030 (press P for presenter mode with notes)
+npx slidev build slides.md    # static site in deck/dist
+npx slidev export slides.md --output kochi-deck.pdf   # needs playwright-chromium, installed by npm install
+```
+
 ## Ideas to try next
 - Make Chechi speak Tamil, Kannada, Telugu or Hindi (change `language` and the voice).
 - Give your dashboard agent a tool (e.g. a weather API) so it can look things up.
