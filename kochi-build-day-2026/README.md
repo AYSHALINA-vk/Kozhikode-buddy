@@ -72,15 +72,18 @@ Every turn prints a latency line like `⏱ STT 1.76s | LLM 1.44s | TTS 3.77s`. E
 
 ### Build it properly · `chechi_pipecat.py`, streaming, VAD, barge-in
 The same Chechi, built the way real voice agents are built, with [Pipecat](https://docs.pipecat.ai):
-- **Streaming everything:** Pulse STT and Lightning TTS over WebSockets, Electron streaming tokens in between
+- **Streaming everything:** Pulse STT and Lightning TTS over WebSockets, an OpenAI model streaming tokens in between
 - **Silero VAD** decides when you're talking
 - **Barge-in:** talk over her and she stops mid-sentence, and her memory keeps only what she actually said
 - A latency line per service, every turn
 
+It needs two keys: Smallest for the ears and the voice, OpenAI for the brain. (`three_api_calls.py` only needs the Smallest key.)
 ```bash
+export SMALLEST_API_KEY="your-smallest-key"
+export OPENAI_API_KEY="your-openai-key"     # or copy .env.example to .env and fill both in
 python chechi_pipecat.py
 ```
-Open http://localhost:7860, click **Connect**, allow the mic and say hi. Wear earphones, or she hears herself and interrupts her own sentence. One `SMALLEST_API_KEY` runs all three models. Set `CHECHI_VOICE=vishnu` for a male voice.
+Open http://localhost:7860, click **Connect**, allow the mic and say hi. Wear earphones, or she hears herself and interrupts her own sentence. The LLM defaults to `gpt-4.1-mini`; set `OPENAI_MODEL` to try another. Set `CHECHI_VOICE=vishnu` for a male voice.
 
 ### Taking it to a phone and production
 Same pipeline, different wire. My public [blog-code](https://github.com/abhishekmishragithub/blog-code) repo has the [voice-agent](https://github.com/abhishekmishragithub/blog-code/tree/main/voice-agent) this is based on and a [phone-agent](https://github.com/abhishekmishragithub/blog-code/tree/main/phone-agent) that puts it on a real phone number through Plivo or Twilio.

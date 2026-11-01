@@ -5,11 +5,12 @@ Same persona as three_api_calls.py, but this is how you'd actually build it:
   - everything streams: Pulse STT (Malayalam) and Lightning v3.1 Pro TTS over WebSockets
   - Silero VAD decides when you're talking
   - barge-in: start talking and Chechi stops mid-sentence
-  - the LLM is Electron, Smallest's OpenAI-compatible model, so one SMALLEST_API_KEY runs it all
+  - the LLM is an OpenAI model (gpt-4.1-mini by default, set OPENAI_MODEL to change it)
 
 Run it:
   pip install -r requirements.txt
-  export SMALLEST_API_KEY="your-key"     # or put it in .env
+  export SMALLEST_API_KEY="your-smallest-key"   # STT + TTS (or put both in .env)
+  export OPENAI_API_KEY="your-openai-key"       # the LLM
   python chechi_pipecat.py
   then open http://localhost:7860, click Connect, allow the mic, and wear headphones
   (on speakers she can hear herself and interrupt her own sentence).
@@ -30,7 +31,7 @@ from pipecat.processors.aggregators.llm_response_universal import LLMContextAggr
 from pipecat.processors.frame_processor import FrameDirection, FrameProcessor
 from pipecat.runner.types import RunnerArguments
 from pipecat.runner.utils import create_transport
-from pipecat.services.smallest.llm import SmallestLLMService
+from pipecat.services.openai.llm import OpenAILLMService
 from pipecat.services.smallest.stt import SmallestSTTService
 from pipecat.services.smallest.tts import SmallestTTSService
 from pipecat.transcriptions.language import Language
@@ -39,6 +40,7 @@ from pipecat.workers.runner import WorkerRunner
 
 load_dotenv(override=True)
 
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")  # cheap and fast; any OpenAI chat model works
 VOICE = os.getenv("CHECHI_VOICE", "parvathy")  # other Malayalam voices: lakshmi, vishnu, sreenath, unni, aravindan
 
 # Same persona as three_api_calls.py
@@ -66,20 +68,21 @@ class LatencyMeter(FrameProcessor):
 
 
 def make_services():
-    """The three models. Same three APIs as three_api_calls.py, but streaming."""
-    key = os.getenv("SMALLEST_API_KEY")
-    if not key:
-        raise SystemExit("Set SMALLEST_API_KEY first (see .env.example).")
+    """The three models: Smallest for the ears and the mouth, OpenAI for the brain. All streaming."""
+    smallest_key = os.getenv("SMALLEST_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if not smallest_key or not openai_key:
+        raise SystemExit("Set SMALLEST_API_KEY and OPENAI_API_KEY first (see .env.example).")
     stt = SmallestSTTService(
-        api_key=key,
+        api_key=smallest_key,
         settings=SmallestSTTService.Settings(language=Language.ML),  # Pulse, Malayalam
     )
-    llm = SmallestLLMService(  # Electron
-        api_key=key,
-        settings=SmallestLLMService.Settings(system_instruction=PERSONA),
+    llm = OpenAILLMService(
+        api_key=openai_key,
+        settings=OpenAILLMService.Settings(model=OPENAI_MODEL, system_instruction=PERSONA),
     )
     tts = SmallestTTSService(
-        api_key=key,
+        api_key=smallest_key,
         settings=SmallestTTSService.Settings(
             model="lightning_v3.1_pro", voice=VOICE, language=Language.ML
         ),
