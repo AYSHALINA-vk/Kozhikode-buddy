@@ -32,9 +32,9 @@ Kerala Piravi ashamsakal, everyone!
 
 Today is Kerala's birthday. Seventy years ago today, on 1 November 1956, the state was formed. So happy 70th, Kerala.
 
-I'm not going to try too much Malayalam myself. Later in this session you'll meet someone who speaks it way better than me. She's a voice agent, and she talks in Manglish, the way you actually talk.
+I'm not going to try too much Malayalam myself. In a minute you will meet someone who speaks it way better than me. She's a voice agent, and she talks in Manglish, the way you actually talk.
 
-But first, you're going to build your own.
+And then you are going to build your own.
 -->
 
 ---
@@ -61,28 +61,57 @@ There's a lot of hype around AI right now. Today is not about the hype. Today yo
 -->
 
 ---
+layout: center
+class: text-center
+title: Meet Chechi
+---
+
+<div class="eyebrow mb-4">Meet Chechi</div>
+
+<div class="font-mono" style="font-size:4.6rem; font-weight:700; letter-spacing:0.04em; white-space:nowrap; color:var(--green700); line-height:1.2">+91 22 6809 3636</div>
+
+<div class="mt-8 text-2xl">Before we build anything, let's call her.</div>
+
+<!--
+60 seconds, no more.
+
+"Before I explain anything, let me call someone." Call from your own phone, held to the mic, not on speaker.
+
+Let her greet. She opens with the Kerala Piravi wish.
+
+Ask one Malayalam question in one breath, no pause after "Chechi". Like "Chechi, Kochiyil evening enthu cheyyam?"
+
+Then one in pure English, like "What should I eat in Fort Kochi?" She still answers in Manglish.
+
+Hang up and say "That's a voice agent. In the next 10 minutes you'll build your own."
+
+If the call fails, don't debug. Say "she's busy, we'll call her back later" and move on.
+-->
+
+---
 title: Today
 ---
 
 <div class="eyebrow">Today</div>
 
-# Four things, in this order
+# Five things, in this order
 
 <div class="mt-8 font-mono text-xl leading-loose">
 
-1. **Build** your first voice agent <span class="meta">· ~12 min</span> <span style="color:var(--green)">→ laptops out</span>
-2. **Look underneath**, with open source <span class="meta">· ~12 min</span>
-3. **Demo** · call Chechi, the Manglish agent <span class="meta">· ~5 min</span> <span style="color:var(--green)">→ phone</span>
-4. **Your turn** · test it, take the repo home
+1. **Meet Chechi** · a quick call <span class="meta">· ~1 min</span> <span style="color:var(--green)">→ phone</span>
+2. **Build** your first voice agent <span class="meta">· ~12 min</span> <span style="color:var(--green)">→ laptops out</span>
+3. **Look underneath**, with open source <span class="meta">· ~12 min</span>
+4. **Demo and test** · Chechi again, then pytest <span class="meta">· ~7 min</span>
+5. **Your turn** · take the repo home
 
 </div>
 
 <!--
-Here's the plan. First you build. No code, on a real platform, about twelve minutes.
+Here's the plan. You just met Chechi. Now you build your own. No code, on a real platform, about twelve minutes.
 
 Then I open the hood and show you how that thing works, all with open source.
 
-Then a live demo on a real phone number, in Manglish.
+Then we call Chechi again, properly this time, and I show you how to test an agent so it still works tomorrow.
 
 And then you take everything home in a repo.
 -->
@@ -536,12 +565,12 @@ title: Call Chechi
 <div class="mt-6 text-sm subtle font-mono">It's an AI. Normal call charges. Try it yourself after the session, one call at a time.</div>
 
 <!--
-Theory's done. Now the Malayalam one. This is Chechi. Same pipeline idea, and she speaks Manglish. This is a real Indian phone number with the agent on the other end.
+Now that you know how it works, let's call Chechi again. Same number as the start. This time listen for the pieces. Speech to text catching the Malayalam, the brain mixing in English, the voice coming back fast, and what happens when I cut her off.
 
 Call from your own phone, hold it to the mic, NOT on speaker, so she doesn't hear herself and cut in. You're the only caller. In testing, parallel calls dropped, so don't ask the room to dial in.
 
-1. Let her greet. She opens with the Kerala Piravi wish.
-2. Ask one Malayalam question in one breath, no pause after "Chechi". Like "Chechi, Kochiyil evening enthu cheyyam?"
+1. Let her greet.
+2. Ask a new Malayalam question (not the one from the cold open) in one breath, no pause after "Chechi". Like "Chechi, Kochiyil evening enthu cheyyam?"
 3. Ask the next one in pure English. Point out she still answers in Manglish. That's the moment.
 4. Talk over her once, firmly, for a couple of seconds, to show interruption. Tie it back to the barge-in slide.
 5. Take 2 or 3 questions shouted from the room and ask her yourself.
@@ -585,6 +614,49 @@ These feed recorded voices into the agent and check what comes back. One takes t
 And the live one uses a tool I wrote called sipling. It's open source. It makes a real phone call to the agent from a test and checks it picked up and actually spoke. So your CI can phone your agent every night.
 
 If it fails, laugh. "And that's why we test." Move on.
+-->
+
+---
+title: Resources
+---
+
+<div class="eyebrow">Where to actually learn this</div>
+
+# Resources
+
+<div class="grid grid-cols-2 gap-8 mt-2 items-start">
+
+<div class="text-sm leading-relaxed">
+
+**The textbook:** <i>Voice AI & Voice Agents: An Illustrated Primer</i> · `voiceaiandvoiceagents.com`
+
+**Pipecat:** `docs.pipecat.ai` · `pip install "pipecat-ai[smallest]"`
+
+**LiveKit Agents:** `docs.livekit.io/agents` · `pip install livekit-plugins-smallestai`
+
+**Smallest Waves docs:** `docs.smallest.ai`
+
+</div>
+
+<div class="grid grid-cols-2 gap-3 text-center text-xs font-mono subtle">
+  <div><img src="/images/qr-primer.png" class="w-26 rounded" style="border:1px solid var(--g200)" /><div class="mt-1">the primer</div></div>
+  <div><img src="/images/qr-pipecat-trim.png" class="w-26 rounded" style="border:1px solid var(--g200)" /><div class="mt-1">pipecat</div></div>
+  <div><img src="/images/qr-livekit.png" class="w-26 rounded" style="border:1px solid var(--g200)" /><div class="mt-1">livekit agents</div></div>
+  <div><img src="/images/qr-smallest.png" class="w-26 rounded" style="border:1px solid var(--g200)" /><div class="mt-1">smallest docs</div></div>
+</div>
+
+</div>
+
+<!--
+If you want to go deeper after today, start here.
+
+The primer is the best free textbook on voice AI right now. Read it end to end, it's worth it.
+
+Pipecat and LiveKit Agents are the two open source frameworks I talked about. Both have a Smallest plugin, one pip install and you're running.
+
+And our docs, if you want to go further with the platform you used today.
+
+Pause here for 10 seconds so people can scan.
 -->
 
 ---
