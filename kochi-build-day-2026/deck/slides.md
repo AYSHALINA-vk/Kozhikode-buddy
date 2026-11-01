@@ -209,33 +209,48 @@ That was a platform doing a lot of work you didn't see. Now I want to open the h
 
 ---
 layout: center
-title: The mental model
+title: The mental model everyone starts with
 ---
 
-<div class="eyebrow mb-4">The mental model everyone starts with</div>
+<div class="eyebrow mb-8">The mental model everyone starts with</div>
 
-<img src="/images/text-agent.svg" class="w-120 mx-auto" />
+<img src="/images/text-agent.svg" class="w-180 mx-auto" />
+
+<!--
+This is a text agent. One model. One box. You send tokens, you get tokens.
+
+Everything you know about building LLM apps lives inside this box. ChatGPT is this. Most of you have built something like this already.
+
+And most people think a voice agent is the same thing with a mic stuck on the front. It's not.
+-->
+
+---
+layout: center
+title: The mental model you actually need
+---
+
+<div class="eyebrow mb-6">The mental model you actually need</div>
 
 <v-click>
 
-<div class="eyebrow mt-10 mb-4">The one you actually need</div>
+<img src="/images/pipeline.svg" class="w-230 mx-auto" />
 
-<img src="/images/pipeline-trim.svg" class="w-230 mx-auto" />
+</v-click>
 
-<div class="text-center mt-6 text-xl">
+<v-click>
+
+<div class="text-center mt-10 text-xl">
 <b style="color:var(--green)">Everything hard about voice AI lives in the arrows, not the boxes.</b>
 </div>
 
 </v-click>
 
 <!--
-This is a text agent. Text in, text out, one box. ChatGPT is this.
+[click] This is a voice agent. Same LLM, sitting in the middle, doing maybe 30% of the work. Around it, four more components. Something to detect speech, something to know when you stopped talking, speech to text, text to speech. Plus a real-time transport layer, and a clock that will not wait for you.
 
-[click]
+So it's not one model in one box. It's a system.
 
-This is a voice agent. Same brain in the middle. Around it you need something to detect speech, something to know when you stopped talking, speech to text, text to speech, and a clock that won't wait for you.
-
-Everything hard about voice AI lives in the arrows, not the boxes.
+[click] This is the line the whole talk hangs on. Everything hard about voice AI lives in the arrows, not the boxes. In a minute we walk this diagram left to right, box by box.
 -->
 
 ---
