@@ -590,7 +590,7 @@ Call from your own phone, hold it to the mic, NOT on speaker, so she doesn't hea
 4. Talk over her once, firmly, for a couple of seconds, to show interruption. Tie it back to the barge-in slide.
 5. Take 2 or 3 questions shouted from the room and ask her yourself.
 
-If the call fails, don't debug. Say "live demos!", open Chechi v1 in the dashboard and use Test. If that fails too, run python manglish_agent.py --type in the terminal.
+If the call fails, don't debug. Say "live demos!", open Chechi v1 in the dashboard and use Test. If that fails too, run python three_api_calls.py --type in the terminal.
 -->
 
 ---

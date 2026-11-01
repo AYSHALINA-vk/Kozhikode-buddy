@@ -1,13 +1,22 @@
 """
-manglish_agent.py: a Malayalam + English (Manglish) voice agent, for Kerala Piravi.
-Ears: Smallest Pulse STT (language=ml)   Brain: Electron LLM   Mouth: Lightning v3.1 Pro TTS (Malayalam voice)
+three_api_calls.py: Chechi, a Malayalam + English (Manglish) voice agent, stripped bare.
+
+This is the three Smallest APIs in a row, one turn at a time:
+  1. speech to text   Pulse STT (language=ml)
+  2. LLM              Electron, OpenAI-compatible chat completions
+  3. text to speech   Lightning v3.1 Pro, a Malayalam voice
+
+No streaming, no voice activity detection, no barge-in. Each step waits for the one before it,
+so you can see every piece and the time it takes. It's for learning only. It is NOT how you ship
+a voice agent. For the real thing (streaming, VAD, interruptions) see chechi_pipecat.py.
 
 Run it:
   pip install -r requirements.txt
   export SMALLEST_API_KEY="your-key"     # Windows PowerShell: $env:SMALLEST_API_KEY="your-key"
-  python manglish_agent.py                       # push-to-talk with your mic
-  python manglish_agent.py --file samples/user_question_ml.wav   # no mic? feed it a wav
-  python manglish_agent.py --type                # no mic at all? type your line instead
+  python three_api_calls.py                       # push-to-talk with your mic
+  python three_api_calls.py --file samples/user_question_ml.wav   # no mic? feed it a wav
+  python three_api_calls.py --type                # no mic at all? type your line instead
+  Ctrl+C or q quits.
 
 Tip: --voice vishnu (male) or --voice parvathy (female). Other Malayalam voices: lakshmi, sreenath, unni, aravindan.
 """
@@ -24,7 +33,7 @@ MIC_RATE, SECONDS = 16000, 5
 
 PERSONA = (
     "You are Chechi, a warm, funny voice assistant from Kochi, talking to students at BUILD Day Cochin "
-    "on Kerala Piravi (1 November, the day Kerala state was formed in 1956). "
+    "on Kerala Piravi (1 November 2026, the 70th anniversary of Kerala state being formed on 1 November 1956). Never make up facts or numbers. "
     "Talk the way young people in Kerala actually talk: Malayalam written in Malayalam script, "
     "with English words mixed in naturally (code-switching), like 'ഇന്ന് നമ്മൾ ഒരു voice agent build ചെയ്യാം'. "
     "Reply in 1 or 2 short spoken sentences. No markdown, no emojis, no lists."
@@ -95,16 +104,27 @@ def turn(get_text, voice, n):
     print(f"⏱  STT {t1 - t0:.2f}s | LLM {t2 - t1:.2f}s | TTS {t3 - t2:.2f}s")
 
 
-if __name__ == "__main__":
+def bye():
+    """Stop any audio and leave right away, on the first Ctrl+C."""
+    try:
+        import sounddevice as sd
+        sd.stop()
+    except Exception:
+        pass
+    print("\nbye! നന്ദി 👋", flush=True)
+    os._exit(0)  # don't wait on audio threads or a hanging HTTP call
+
+
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--file", help="use this wav as what you said (no mic needed)")
     ap.add_argument("--type", action="store_true", help="type instead of talking")
     ap.add_argument("--voice", default="parvathy")
     a = ap.parse_args()
-    print("Chechi is live. കേരളപ്പിറവി ആശംസകൾ!")
+    print("Chechi is live. കേരളപ്പിറവി ആശംസകൾ! (Ctrl+C or q to quit)")
     if a.file:
         turn(lambda: speech_to_text(open(a.file, "rb").read()), a.voice, 1)
-        sys.exit()
+        return
     n = 0
     while True:
         cmd = input("\nEnter to talk (or type a line), q to quit > ").strip()
@@ -115,5 +135,13 @@ if __name__ == "__main__":
             line = cmd or input("you > ")
             turn(lambda: line, a.voice, n)
         else:
-            t_rec = time.time(); wav = record_wav()
+            wav = record_wav()
             turn(lambda: speech_to_text(wav), a.voice, n)
+    print("bye! നന്ദി 👋")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        bye()

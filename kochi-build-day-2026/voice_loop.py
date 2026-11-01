@@ -83,7 +83,7 @@ def speak(text: str, voice_id="meher"):
         sd.play(pcm, samplerate=w.getframerate()); sd.wait()
 
 
-if __name__ == "__main__":
+def main():
     print("Kochi Buddy is live. Press Enter to talk, type q + Enter to quit.")
     while input("> ").strip().lower() != "q":
         t0 = time.time()
@@ -99,3 +99,12 @@ if __name__ == "__main__":
         t3 = time.time()
         # The latency lesson: where did the time go?
         print(f"⏱  STT {t1 - t0 - SECONDS:.2f}s | LLM {t2 - t1:.2f}s | TTS+play {t3 - t2:.2f}s")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        sd.stop()
+        print("\nbye 👋", flush=True)
+        os._exit(0)  # first Ctrl+C always wins, even mid-recording or mid-request

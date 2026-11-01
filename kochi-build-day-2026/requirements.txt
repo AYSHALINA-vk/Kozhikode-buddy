@@ -1,4 +1,9 @@
-requests
-sounddevice
-numpy
-pytest
+# Start here: three_api_calls.py, voice_loop.py and the tests
+requests==2.34.2
+sounddevice==0.5.6
+numpy==2.5.4
+pytest==9.2.0
+
+# Build it properly: chechi_pipecat.py (Python 3.11 or newer)
+pipecat-ai[smallest,openai,silero,webrtc,runner]==1.15.0
+python-dotenv==1.2.4

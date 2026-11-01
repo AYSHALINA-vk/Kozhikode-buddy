@@ -5,7 +5,7 @@ Two kinds of tests in one file:
 
 1. OFFLINE tests (run by default, need only SMALLEST_API_KEY + internet).
    They feed the recorded wavs in samples/ through Chechi's ears, brain and mouth
-   (the same functions manglish_agent.py uses) and assert on what comes back.
+   (the same functions three_api_calls.py uses) and assert on what comes back.
        pytest -v test_chechi_call.py
 
 2. LIVE phone test (opt-in). sipling places a REAL SIP call to the agent's number
@@ -27,7 +27,7 @@ import pytest
 if not os.environ.get("SMALLEST_API_KEY"):
     pytest.skip("set SMALLEST_API_KEY to run these tests", allow_module_level=True)
 
-import manglish_agent as chechi  # noqa: E402
+import three_api_calls as chechi  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MALAYALAM = re.compile(r"[\u0D00-\u0D7F]")  # Malayalam Unicode block

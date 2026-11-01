@@ -4,12 +4,12 @@ Workshop by Abhishek Mishra ([@stalwartcoder](https://x.com/stalwartcoder)) at B
 
 Two ways to build a voice agent:
 1. **No code, 15 min:** build one on a voice AI platform and talk to it in the browser.
-2. **Code, 10 min:** run the pipeline yourself (speech to text → LLM → text to speech) and see where the time goes. Includes **Chechi**, a voice agent that speaks Manglish (Malayalam + English).
+2. **Code:** first see the three pieces bare (speech to text → LLM → text to speech), then run **Chechi**, a Manglish (Malayalam + English) agent, built properly with Pipecat.
 
 ## What you need
 - A laptop with Chrome and a mic (earphones help)
 - An email to sign up with. New accounts get free credits, no card needed.
-- For the code part: Python 3.10+
+- For the code part: Python 3.11+
 
 ---
 
@@ -53,26 +53,37 @@ pip install -r requirements.txt
 export SMALLEST_API_KEY="your-key"          # Windows PowerShell: $env:SMALLEST_API_KEY="your-key"
 ```
 
-### Chechi, the Manglish agent 🥥
+### Start here · `three_api_calls.py`, see the pieces
+Chechi with everything stripped away: three Smallest API calls in a row, one turn at a time.
 ```bash
-python manglish_agent.py                                      # press Enter, talk for 5 s
-python manglish_agent.py --type                               # no mic: type your line
-python manglish_agent.py --file samples/user_question_ml.wav  # no mic: feed it a wav
-python manglish_agent.py --voice vishnu                       # male voice
+python three_api_calls.py                                      # press Enter, talk for 5 s
+python three_api_calls.py --type                               # no mic: type your line
+python three_api_calls.py --file samples/user_question_ml.wav  # no mic: feed it a wav
+python three_api_calls.py --voice vishnu                       # male voice
 ```
-Talk to her the way you talk to friends: *"Chechi, ഇന്ന് Kerala Piravi ആണല്ലോ, ഒരു fun fact പറയാമോ?"*
-How she works:
+Ctrl+C or `q` quits. Talk to her the way you talk to friends: *"Chechi, ഇന്ന് Kerala Piravi ആണല്ലോ, ഒരു fun fact പറയാമോ?"*
 - **Ears:** Smallest Pulse speech to text with `language=ml`
-- **Brain:** an LLM with a prompt that says "reply in Malayalam with English mixed in, 1 or 2 sentences"
+- **Brain:** Electron, Smallest's LLM, with a prompt that says "reply in Malayalam with English mixed in, 1 or 2 sentences"
 - **Mouth:** Lightning v3.1 Pro text to speech with a Malayalam voice (`parvathy`, `lakshmi`, `vishnu`, `sreenath`, `unni`, `aravindan`)
 
-Every turn prints a latency line like `⏱ STT 1.76s | LLM 1.44s | TTS 3.77s`. This demo waits for each step to finish. Real agents stream every step, which is the main thing the talk is about. Making Chechi stream is a great next project.
+Every turn prints a latency line like `⏱ STT 1.76s | LLM 1.44s | TTS 3.77s`. Each step waits for the one before it. No streaming, no voice activity detection, no barge-in. That's on purpose, so you can see the pieces. It's for learning, not how you ship an agent.
 
-### voice_loop.py, the English version
+`voice_loop.py` is the same idea in English, about 60 lines: `python voice_loop.py`.
+
+### Build it properly · `chechi_pipecat.py`, streaming, VAD, barge-in
+The same Chechi, built the way real voice agents are built, with [Pipecat](https://docs.pipecat.ai):
+- **Streaming everything:** Pulse STT and Lightning TTS over WebSockets, Electron streaming tokens in between
+- **Silero VAD** decides when you're talking
+- **Barge-in:** talk over her and she stops mid-sentence, and her memory keeps only what she actually said
+- A latency line per service, every turn
+
 ```bash
-python voice_loop.py
+python chechi_pipecat.py
 ```
-Same loop, English, about 60 lines.
+Open http://localhost:7860, click **Connect**, allow the mic and say hi. Wear earphones, or she hears herself and interrupts her own sentence. One `SMALLEST_API_KEY` runs all three models. Set `CHECHI_VOICE=vishnu` for a male voice.
+
+### Taking it to a phone and production
+Same pipeline, different wire. My public [blog-code](https://github.com/abhishekmishragithub/blog-code) repo has the [voice-agent](https://github.com/abhishekmishragithub/blog-code/tree/main/voice-agent) this is based on and a [phone-agent](https://github.com/abhishekmishragithub/blog-code/tree/main/phone-agent) that puts it on a real phone number through Plivo or Twilio.
 
 ### Sample audio (`samples/`)
 | File | What |
@@ -87,7 +98,7 @@ Same loop, English, about 60 lines.
 ```bash
 pytest -v test_chechi_call.py
 ```
-Feeds the recorded voices in `samples/` through Chechi and checks she understands Malayalam (even at phone quality), replies in Manglish without markdown, and returns real audio.
+Feeds the recorded voices in `samples/` through the functions in `three_api_calls.py` and checks she understands Malayalam (even at phone quality), replies in Manglish without markdown, and returns real audio.
 To test a real phone call, use [sipling](https://github.com/abhishekmishragithub/sipling), an open source pytest tool that places SIP calls. Setup notes are at the top of the test file.
 
 ---
@@ -99,7 +110,7 @@ The talk part of the session: how a platform like this works underneath.
 - **Speech to text:** Whisper (batch), or any streaming STT API
 - **Text to speech:** Piper, Kokoro, AI4Bharat IndicF5 for Indian languages
 - **The best free guide:** *Voice AI & Voice Agents: An Illustrated Primer*, voiceaiandvoiceagents.com
-- **Slides and the full Pipecat demo** from the talk: https://github.com/abhishekmishragithub/voice-ai-talk/tree/main/2026-09-26-cloudways-voice-agents-demo-to-prod
+- **Slides** from today are in [`deck/`](deck/), and the Pipecat code is `chechi_pipecat.py` above
 
 ## The slides (`deck/`)
 The deck from the session is a [Slidev](https://sli.dev) project, with speaker notes on every slide. A PDF copy is at `deck/kochi-deck.pdf`.
@@ -115,7 +126,7 @@ npx slidev export slides.md --output kochi-deck.pdf   # needs playwright-chromiu
 ## Ideas to try next
 - Make Chechi speak Tamil, Kannada, Telugu or Hindi (change `language` and the voice).
 - Give your dashboard agent a tool (e.g. a weather API) so it can look things up.
-- Port Chechi to Pipecat so every step streams, and watch the latency line drop.
+- Put `chechi_pipecat.py` on a phone number with the phone-agent code linked above.
 
 Built something? Post it and tag **@stalwartcoder** with **#BUILDDayCochin**.
 **Never commit your API key.** Use `.env` (already in `.gitignore`) or export it in your terminal.
